@@ -1,20 +1,30 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Wlcome() {
+export default function Welcome() {
   return (
     <>
+    <header>
+      <h1>Welcome To SkillSync</h1>
      <Image
             src="/skillsync.jpg"
-            width={300}
+            width={300} 
             height={300}
             alt="List of courses"
           />
-    <h1>Welcome To SkillSync</h1>
+
+    </header>
+    
+    
     
    <Link href = "login"> Login </Link>
    <br />
-   <Link href= "signup"> Sign Up </Link>
+   <Link href= "signnup"> Sign Up </Link>
+   <footer>
+      
+    </footer>
+    
     </>
+    
   );
 }

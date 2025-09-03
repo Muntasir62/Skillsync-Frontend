@@ -5,12 +5,15 @@ export default function Users()
 {
     return (
         <>
+        <header>
+             <h1>Welcome To SkillSync</h1>
          <Image
         src="/users.png"
         width={500}
         height={500}
         alt="List of users"
       />
+        </header>
         <h1>User Details</h1>
         <table>
             <thead>
@@ -37,6 +40,9 @@ export default function Users()
         <Link href="home">
              <button type="submit">Back To Homepage</button>
             </Link>
+            <footer>
+                
+            </footer>
         </>
 
     );

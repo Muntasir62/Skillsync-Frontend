@@ -4,12 +4,15 @@ import Image from "next/image";
 export default function Reviews() {
   return (
     <>
+     <header>
+      <h1>Welcome To SkillSync</h1>
      <Image
             src="/reviews.jpg"
             width={500}
             height={500}
             alt="List of courses"
           />
+     </header>
       <h1>Reviews</h1>
       <table>
         <thead>
@@ -39,6 +42,9 @@ export default function Reviews() {
        <Link href="home">
              <button type="submit">Back To Homepage</button>
             </Link>
+            <footer>
+              
+            </footer>
     </>
   );
 }

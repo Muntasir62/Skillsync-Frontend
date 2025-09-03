@@ -4,18 +4,21 @@ export default function Login()
 {
     return (
         <>
+       <header>
+          <h1>Welcome To SkillSync</h1>
        <Image
         src="/login.png"
         width={400}
         height={400}
         alt="List of notifications"
       />
+       </header>
         
         <h1>Login page</h1>
         <form action="">
-            <input type="email" placeholder="Email" />
+            Email : <input type="email" placeholder="Email" />
             <br />
-            <input type="password" placeholder="Password" />
+            Password : <input type="password" placeholder="Password" />
             <br />
              <Link href="home">
              <button type="submit">Login</button>
@@ -24,6 +27,9 @@ export default function Login()
 
         </form>
         <Link href="signup">Don't have an account? Sign Up</Link>
+        <footer>
+          
+        </footer>
         </>
     );
 }

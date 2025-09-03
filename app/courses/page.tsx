@@ -5,12 +5,15 @@ export default function Courses()
 {
     return (
         <>
+       <header>
+          <h1>Welcome To SkillSync</h1>
           <Image
         src="/courses.jpg"
         width={500}
         height={500}
         alt="List of courses"
       />
+       </header>
          
         <h1>Courses</h1>
         <table>
@@ -38,6 +41,9 @@ export default function Courses()
         <Link href="home">
              <button type="submit">Back To Homepage</button>
             </Link>
+            <footer>
+              
+            </footer>
         
 </>
     );
