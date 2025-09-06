@@ -19,7 +19,7 @@ export default function Welcome() {
     
    <Link href = "login"> Login </Link>
    <br />
-   <Link href= "signnup"> Sign Up </Link>
+   <Link href= "signup"> Sign Up </Link>
    <footer>
       
     </footer>
