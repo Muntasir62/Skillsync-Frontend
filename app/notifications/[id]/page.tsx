@@ -1,5 +1,5 @@
 "use client";
-import { use } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -13,63 +13,89 @@ interface Notification {
   timestamp: string;
 }
 
-export default function Notification({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function NotificationDetails() {
+  const params = useParams();
+  const router = useRouter();
   const [notification, setNotification] = useState<Notification | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchNotification();
-  }, [id]);
+    const fetchNotification = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          setError("Authentication required");
+          return;
+        }
 
-  const fetchNotification = async () => {
-    try {
-      const token = localStorage.getItem("access_token");
-      
-      setNotification({
-        id: parseInt(id),
-        title: "System Maintenance",
-        message: "The system will be down for maintenance on Saturday from 2 AM to 4 AM. Please save your work beforehand.",
-        recipient: "all_users",
-        timestamp: new Date().toISOString()
-      });
-    } catch (err: any) {
-      setError("Failed to fetch notification details");
-      console.error(err);
-    } finally {
-      setLoading(false);
+        const response = await axios.get(
+          `http://localhost:4000/admin/notifications/${params.id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+        setNotification(response.data);
+      } catch (err: any) {
+        console.error("Error fetching notification:", err);
+        setError(err.response?.data?.message || "Failed to fetch notification details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (params.id) {
+      fetchNotification();
     }
-  };
+  }, [params.id]);
 
-  if (loading) return <div style={{ padding: "20px" }}>Loading notification details...</div>;
-  if (error) return <div style={{ padding: "20px", color: "red" }}>{error}</div>;
-  if (!notification) return <div style={{ padding: "20px" }}>Notification not found</div>;
+  if (loading) return <div className="p-6">Loading notification details...</div>;
+  if (error) return <div className="p-6 text-red-500">{error}</div>;
+  if (!notification) return <div className="p-6">Notification not found</div>;
 
   return (
-   <div className="container p-5 max-w-3xl mx-auto">
-      <Image
-        src="/notifications.jpg"
-        width={300}
-        height={200}
-        alt="Notification details"
-        className="mx-auto block"
-      />
-      
-      <h1 className="text-center text-darker mt-4 mb-4">Notification Details</h1>
-      
-      <div className="card p-5 rounded-lg shadow-md">
-        <p className="text-dark"><strong className="text-darker">ID:</strong> {notification.id}</p>
-        <p className="text-dark"><strong className="text-darker">Title:</strong> {notification.title}</p>
-        <p className="text-dark"><strong className="text-darker">Message:</strong> {notification.message}</p>
-        <p className="text-dark"><strong className="text-darker">Recipient:</strong> {notification.recipient}</p>
-        <p className="text-dark"><strong className="text-darker">Timestamp:</strong> {new Date(notification.timestamp).toLocaleString()}</p>
-      </div>
-      
-      <div className="text-center mt-4">
-        <Link href="/notifications">
-          <button>Back To Notifications</button>
-        </Link>
+    <div className="max-w-2xl mx-auto p-6">
+      <header className="text-center mb-8">
+        <h1 className="text-2xl font-bold mb-4">Notification Details</h1>
+        <Image
+          src="/notifications.jpg"
+          width={200}
+          height={200}
+          alt="Notification details"
+          className="mx-auto"
+        />
+      </header>
+
+      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="font-semibold text-white">ID:</div>
+          <div className="text-white">{notification.id}</div>
+
+          <div className="font-semibold text-white">Title:</div>
+          <div className="text-white">{notification.title}</div>
+
+          <div className="font-semibold text-white">Message:</div>
+          <div className="text-white">{notification.message}</div>
+
+          <div className="font-semibold text-white">Recipient:</div>
+          <div className="text-white">{notification.recipient}</div>
+
+          <div className="font-semibold text-white">Timestamp:</div>
+          <div className="text-white">
+            {new Date(notification.timestamp).toLocaleString()}
+          </div>
+        </div>
+
+        <div className="flex gap-4 mt-6">
+          <Link href="/notifications" className="flex-1">
+            <button 
+              type="button"
+              className="w-full bg-gray-500 text-white p-3 rounded hover:bg-gray-600 transition-colors"
+            >
+              Back to Notifications
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );

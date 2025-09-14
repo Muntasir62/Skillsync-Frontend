@@ -102,12 +102,18 @@ export default function Users() {
         />
       </header>
       
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <h1>User Management</h1>
-        <Link href="/home">
-          <button>Back To Homepage</button>
-        </Link>
-      </div>
+    
+<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+  <h1>User Management</h1>
+  <div>
+    <Link href="/users/create">
+      <button style={{ marginRight: "10px" }}>Create User</button>
+    </Link>
+    <Link href="/home">
+      <button>Back To Homepage</button>
+    </Link>
+  </div>
+</div>
       
       <table>
         <thead>

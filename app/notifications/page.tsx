@@ -36,10 +36,7 @@ export default function Notifications() {
     }
   };
 
-  const createNotification = async () => {
-    
-    alert("This would open a form to create a new notification");
-  };
+ 
 
   if (loading) return <div style={{ padding: "20px" }}>Loading notifications...</div>;
   if (error) return <div style={{ padding: "20px", color: "red" }}>{error}</div>;
@@ -56,12 +53,12 @@ export default function Notifications() {
         />
       </header>
       
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <h1>Notification Management</h1>
         <div>
-          <button onClick={createNotification} style={{ marginRight: "10px" }}>
-            Create Notification
-          </button>
+          <Link href="/notifications/create">
+            <button style={{ marginRight: "10px" }}>Create Notification</button>
+          </Link>
           <Link href="/home">
             <button>Back To Homepage</button>
           </Link>

@@ -1,5 +1,5 @@
 "use client";
-import { use } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -14,60 +14,105 @@ interface User {
   isVerified: boolean;
 }
 
-export default function User({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function UserDetails() {
+  const params = useParams();
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchUser();
-  }, [id]);
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          setError("Authentication required");
+          return;
+        }
 
-  const fetchUser = async () => {
-    try {
-      const token = localStorage.getItem("access_token");
-      const response = await axios.get(`http://localhost:4000/admin/users/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setUser(response.data);
-    } catch (err: any) {
-      setError("Failed to fetch user details");
-      console.error(err);
-    } finally {
-      setLoading(false);
+        const response = await axios.get(
+          `http://localhost:4000/admin/users/${params.id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+        setUser(response.data);
+      } catch (err: any) {
+        console.error("Error fetching user:", err);
+        setError(err.response?.data?.message || "Failed to fetch user details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (params.id) {
+      fetchUser();
     }
-  };
+  }, [params.id]);
 
-  if (loading) return <div>Loading user details...</div>;
-  if (error) return <div style={{ color: "red" }}>{error}</div>;
-  if (!user) return <div>User not found</div>;
+  if (loading) return <div className="p-6">Loading user details...</div>;
+  if (error) return <div className="p-6 text-red-500">{error}</div>;
+  if (!user) return <div className="p-6">User not found</div>;
 
   return (
-     <div className="container p-5 max-w-2xl mx-auto">
-      <Image
-        src="/users.png"
-        width={200}
-        height={200}
-        alt="User details"
-        className="mx-auto block"
-      />
-      
-      <h1 className="text-center text-darker mt-4 mb-4">User Details</h1>
-      
-      <div className="card p-5 rounded-lg shadow-md">
-        <p className="text-dark"><strong className="text-darker">ID:</strong> {user.id}</p>
-        <p className="text-dark"><strong className="text-darker">Name:</strong> {user.name}</p>
-        <p className="text-dark"><strong className="text-darker">Email:</strong> {user.email}</p>
-        <p className="text-dark"><strong className="text-darker">Role:</strong> {user.role}</p>
-        <p className="text-dark"><strong className="text-darker">Active Status:</strong> {user.isActive ? "Active" : "Suspended"}</p>
-        <p className="text-dark"><strong className="text-darker">Verified Status:</strong> {user.isVerified ? "Verified" : "Not Verified"}</p>
-      </div>
-      
-      <div className="text-center mt-4">
-        <Link href="/users">
-          <button>Back To Users</button>
-        </Link>
+    <div className="max-w-2xl mx-auto p-6">
+      <header className="text-center mb-8">
+        <h1 className="text-2xl font-bold mb-4">User Details</h1>
+        <Image
+          src="/users.png"
+          width={200}
+          height={200}
+          alt="User details"
+          className="mx-auto"
+        />
+      </header>
+
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="font-semibold">ID:</div>
+          <div>{user.id}</div>
+
+          <div className="font-semibold">Name:</div>
+          <div>{user.name}</div>
+
+          <div className="font-semibold">Email:</div>
+          <div>{user.email}</div>
+
+          <div className="font-semibold">Role:</div>
+          <div className="capitalize">{user.role}</div>
+          <div className="font-semibold text-black">Status:</div> {/* Changed from text-white */}
+<div>
+  <span className={`px-2 py-1 rounded text-sm font-medium ${
+    user.isActive 
+      ? "bg-green-600 text-white border-2 border-green-700" 
+      : "bg-red-600 text-white border-2 border-red-700"
+  }`}>
+    {user.isActive ? "Active" : "Suspended"}
+  </span>
+</div>
+
+<div className="font-semibold text-black">Verified:</div> {/* Changed from text-white */}
+<div>
+  <span className={`px-2 py-1 rounded text-sm font-medium ${
+    user.isVerified 
+      ? "bg-green-600 text-white border-2 border-green-700"
+      : "bg-yellow-600 text-white border-2 border-yellow-700"
+  }`}>
+    {user.isVerified ? "Verified" : "Not Verified"}
+  </span>
+</div>
+                   
+        </div>
+        <div className="flex gap-4 mt-6">
+          <Link href="/users" className="flex-1">
+            <button 
+              type="button"
+              className="w-full bg-gray-500 text-white p-3 rounded hover:bg-gray-600 transition-colors"
+            >
+              Back to Users List
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
